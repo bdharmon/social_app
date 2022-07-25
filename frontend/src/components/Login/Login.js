@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Navigate } from "react-router-dom";
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Card from '@mui/material/Card';
@@ -8,7 +10,7 @@ import Alert from '@mui/material/Alert';
 import LinearProgress from '@mui/material/LinearProgress';
 import axios from 'axios';
 
-const Login = () => {
+const Login = ({ authenticated, setAuthenticated }) => {
     const initialCredentialsState = {
         username: {
             input: '',
@@ -76,6 +78,7 @@ const Login = () => {
                 console.log("Token:", response.headers['authorization']);
                 localStorage.clear();
                 localStorage.setItem('authorization', response.headers['authorization']);
+                setAuthenticated(true);
                 return response.data;
             })
             .then(data => {
@@ -91,27 +94,43 @@ const Login = () => {
             })
     };
 
+    if (authenticated) {
+        return <Navigate to="/home" />;
+    }
+
     return (
 
-        <Card raised={true} style={{ margin: '24px', maxWidth: '500px', width: '100%' }}>
+        <Box sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+            height: '100vh',
+            background: 'linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(43,43,98,1) 8%, rgba(0,112,171,1) 100%)'
+        }}
+        >
 
-            <form style={{ padding: '24px', width: '100%' }} onSubmit={loginSubmitHandler}>
-                <Stack>
-                    {loginError && <Alert severity="error">Invalid Username/Password.</Alert>}
+            <Card raised={true} style={{ margin: '24px', maxWidth: '500px', width: '100%' }}>
 
-                    <Typography style={{ marginBottom: '24px', marginTop: '24px', textAlign: 'center' }} variant='h4'>Login</Typography>
+                <form style={{ padding: '24px', width: '100%' }} onSubmit={loginSubmitHandler}>
+                    <Stack>
+                        {loginError && <Alert severity="error">Invalid Username/Password.</Alert>}
 
-                    <TextField id='username' style={{ marginBottom: '24px' }} label={credentials.username.label} error={credentials.username.error} helperText={credentials.username.errorMsg} variant="outlined" name='username' type="text" value={credentials.username.input} onChange={(e) => credentialsChangeHandler(e)} />
+                        <Typography style={{ marginBottom: '24px', marginTop: '24px', textAlign: 'center' }} variant='h4'>Login</Typography>
 
-                    <TextField id='password' style={{ marginBottom: '24px' }} label={credentials.password.label} error={credentials.password.error} helperText={credentials.password.errorMsg} variant="outlined" name='password' type="password" value={credentials.password.input}
-                        onChange={(e) => credentialsChangeHandler(e)} />
+                        <TextField id='username' style={{ marginBottom: '24px' }} label={credentials.username.label} error={credentials.username.error} helperText={credentials.username.errorMsg} variant="outlined" name='username' type="text" value={credentials.username.input} onChange={credentialsChangeHandler} />
 
-                    <Button style={{ marginBottom: '24px' }} variant="contained" type='submit'>Login</Button>
-                    {loginLoading && <LinearProgress />}
-                </Stack>
-            </form>
+                        <TextField id='password' style={{ marginBottom: '24px' }} label={credentials.password.label} error={credentials.password.error} helperText={credentials.password.errorMsg} variant="outlined" name='password' type="password" value={credentials.password.input}
+                            onChange={credentialsChangeHandler} />
 
-        </Card>
+                        <Button style={{ marginBottom: '24px' }} variant="contained" type='submit'>Login</Button>
+
+                        {loginLoading && <LinearProgress />}
+                    </Stack>
+                </form>
+
+            </Card>
+        </Box>
 
     );
 

@@ -1,26 +1,47 @@
+import { Fragment, useEffect, useState } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import './App.css';
-import Box from '@mui/material/Box';
 import Login from './components/Login/Login';
 import Navbar from './components/template/Navbar';
 
 const App = () => {
+  const [authenticated, setAuthenticated] = useState(false);
+
+  useEffect(() => {
+    if (localStorage.getItem('authorization')) {
+      setAuthenticated(true);
+    }
+  }, []);
+
+  // if (!authenticated) {
+  //   return (
+  //     <BrowserRouter>
+  //       <Routes>
+  //         <Route path="/">
+  //           <Route path="login" element={<Login authenticated={authenticated} setAuthenticated={setAuthenticated} />} />
+  //         </Route>
+  //       </Routes>
+  //     </BrowserRouter>
+  //   );
+  // }
 
   return (
 
-    // <Box sx={{
-    //   display: 'flex',
-    //   alignItems: 'center',
-    //   justifyContent: 'center',
-    //   width: '100%',
-    //   height: '100vh',
-    //   background: 'linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(43,43,98,1) 8%, rgba(0,112,171,1) 100%)'
-    // }}
-    // >
-    //   <Login />
-    // </Box>
+    <BrowserRouter>
 
-    <Navbar />
+      {authenticated && <Navbar />}
 
+      <Routes>
+        {!authenticated ? <Route path="login" element={<Login authenticated={authenticated} setAuthenticated={setAuthenticated} />} /> :
+
+          <Route path="/">
+            <Route path="login" element={<Login authenticated={authenticated} setAuthenticated={setAuthenticated} />} />
+            <Route path="home" index element={<p>home</p>} />
+          </Route>
+        }
+      </Routes>
+
+    </BrowserRouter>
   );
 
 }
