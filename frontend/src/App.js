@@ -1,47 +1,42 @@
-import { Fragment, useEffect, useState } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './App.css';
 import Login from './components/Login/Login';
-import Navbar from './components/template/Navbar';
+import jwtDecode from 'jwt-decode';
+import PrivateRoutes from "./components/Auth/PrivateRoutes";
+import Settings from "./components/Settings/Settings";
 
 const App = () => {
-  const [authenticated, setAuthenticated] = useState(false);
+  const [authenticated, setAuthenticated] = useState(localStorage.getItem('authorization'));
+  const [authToken, setAuthToken] = useState({});
 
   useEffect(() => {
-    if (localStorage.getItem('authorization')) {
+    if (authenticated) {
+      setAuthToken(jwtDecode(localStorage.getItem('authorization')));
       setAuthenticated(true);
     }
-  }, []);
-
-  // if (!authenticated) {
-  //   return (
-  //     <BrowserRouter>
-  //       <Routes>
-  //         <Route path="/">
-  //           <Route path="login" element={<Login authenticated={authenticated} setAuthenticated={setAuthenticated} />} />
-  //         </Route>
-  //       </Routes>
-  //     </BrowserRouter>
-  //   );
-  // }
+    else {
+      setAuthToken({});
+      setAuthenticated(false);
+    }
+  }, [authenticated]);
 
   return (
 
     <BrowserRouter>
 
-      {authenticated && <Navbar />}
-
       <Routes>
-        {!authenticated ? <Route path="login" element={<Login authenticated={authenticated} setAuthenticated={setAuthenticated} />} /> :
+        <Route element={<PrivateRoutes authenticated={authenticated} setAuthenticated={setAuthenticated} authToken={authToken} />}>
+          <Route path="/home" element={<p>home</p>} />
+          <Route path="/about" element={<p>about</p>} />
+          <Route path="/settings" element={<Settings />} />
+        </Route>
 
-          <Route path="/">
-            <Route path="login" element={<Login authenticated={authenticated} setAuthenticated={setAuthenticated} />} />
-            <Route path="home" index element={<p>home</p>} />
-          </Route>
-        }
+        <Route path="/login" element={<Login authenticated={authenticated} setAuthenticated={setAuthenticated} authToken={authToken} />} />
       </Routes>
 
     </BrowserRouter>
+
   );
 
 }

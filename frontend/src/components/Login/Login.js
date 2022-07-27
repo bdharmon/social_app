@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Navigate } from "react-router-dom";
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
@@ -45,6 +45,10 @@ const Login = ({ authenticated, setAuthenticated }) => {
                 credentialsCopy[credential]['errorMsg'] = `${credentialsCopy[credential]['label']} required.`;
                 credentialsCopy[credential]['error'] = true;
                 valid = false;
+            }
+            else {
+                credentialsCopy[credential]['errorMsg'] = '';
+                credentialsCopy[credential]['error'] = false;
             }
         }
 

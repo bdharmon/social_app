@@ -1,24 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { Link } from "react-router-dom";
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import Box from '@mui/material/Box';
-import axios from 'axios';
-import jwtDecode from 'jwt-decode';
 
-const Navbar = () => {
+const Navbar = ({ setAuthenticated, authToken }) => {
     const [anchorEl, setAnchorEl] = useState(null);
-    const [tokenInfo, setTokenInfo] = useState({});
 
     const handleMenu = (event) => {
         setAnchorEl(event.currentTarget);
@@ -28,12 +20,11 @@ const Navbar = () => {
         setAnchorEl(null);
     };
 
-    useEffect(() => {
-        const token = 'eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ0ZXJyZWxsLmt1cGhhbCIsInVzZXJfaWQiOiJlZjc4ZGQ5OS03ODc5LTRjYmItYTljYS04NTMwOTFmNDE5MDYiLCJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9BRE1JTiJ9XSwiaWF0IjoxNjU4NzA4ODg0LCJleHAiOjE2NTk4NDQ4MDB9.1uScPx3ZKDH8HQIE9-Weh9299RDapVVIhATOeqO6MXdnnw-T6ZB1zoafSfgmTD8Q';
-        const decoded = jwtDecode(token);
-        console.log(decoded);
-        setTokenInfo(decoded);
-    }, []);
+    const handleLogout = () => {
+        localStorage.removeItem('authorization');
+        localStorage.clear();
+        setAuthenticated(false);
+    };
 
     return (
 
@@ -74,9 +65,10 @@ const Navbar = () => {
                         open={Boolean(anchorEl)}
                         onClose={handleClose}
                     >
-                        <Typography style={{ padding: '6px 16px' }}>{tokenInfo['sub']}</Typography>
+                        <Typography style={{ padding: '6px 16px' }}>{authToken['sub']}</Typography>
                         <MenuItem onClick={handleClose}>Profile</MenuItem>
-                        <MenuItem onClick={handleClose}>My account</MenuItem>
+                        <MenuItem style={{ padding: '0px' }}><Link to="/settings" style={{ textDecoration: 'none', width: '100%', padding: '6px 16px' }} onClick={handleClose}>Settings</Link></MenuItem>
+                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
                     </Menu>
                 </Box>
             </Toolbar>
