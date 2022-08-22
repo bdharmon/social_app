@@ -60,12 +60,18 @@ public class Blog1Application {
 			}
 			userAccountRepository.saveAll(userAccountList);
 
+//			List<UserAccount> foundUserAccounts3 = userAccountRepository.findAll();
+//			for (UserAccount u : foundUserAccounts3) {
+//				u.addFollower(foundUserAccounts3.get(random.nextInt(foundUserAccounts3.size())));
+//				u.addFollowing(foundUserAccounts3.get(random.nextInt(foundUserAccounts3.size())));
+//				userAccountRepository.save(u);
+//			}
+
 			// saving posts
 			List<UserAccount> foundUserAccounts = userAccountRepository.findAll();
-			Random rand = new Random();
 			for (int i = 1; i <= 200; i++) {
 				Post p1 = new Post(String.format("Title_%d", i), String.format("This is content to post #%d", i));
-				UserAccount randomUser = foundUserAccounts.get(rand.nextInt(foundUserAccounts.size()));
+				UserAccount randomUser = foundUserAccounts.get(random.nextInt(foundUserAccounts.size()));
 				randomUser.addPost(p1);
 				postRepository.save(p1);
 			}
@@ -77,8 +83,8 @@ public class Blog1Application {
 			List<UserAccount> foundUserAccounts1 = userAccountRepository.findAll();
 			List<Vote> votesToSave = new ArrayList<>();
 			for (Post p : postRepository.findAll()) {
-				Vote newVote = new Vote(bools.get(rand.nextInt(bools.size())));
-				newVote.setUserAccount(foundUserAccounts1.get(rand.nextInt(foundUserAccounts.size())));
+				Vote newVote = new Vote(bools.get(random.nextInt(bools.size())));
+				newVote.setUserAccount(foundUserAccounts1.get(random.nextInt(foundUserAccounts.size())));
 				p.addVote(newVote);
 				votesToSave.add(newVote);
 			}

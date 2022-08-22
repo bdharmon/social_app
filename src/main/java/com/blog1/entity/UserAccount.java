@@ -1,5 +1,7 @@
 package com.blog1.entity;
 
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+
 import javax.persistence.*;
 import java.util.*;
 
@@ -36,6 +38,40 @@ public class UserAccount {
             )
     )
     private Set<Role> roles = new HashSet<>();
+
+    @JsonIncludeProperties(value = {"id", "username"})
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_following",
+            joinColumns = @JoinColumn(
+                    name = "user_id",
+                    foreignKey = @ForeignKey(name = "user_following_id_fk"),
+                    referencedColumnName = "user_id"
+            ),
+            inverseJoinColumns = @JoinColumn(
+                    name = "following_id",
+                    foreignKey = @ForeignKey(name = "following_user_id_fk"),
+                    referencedColumnName = "user_id"
+            )
+    )
+    private Set<UserAccount> following = new HashSet<>();
+
+    @JsonIncludeProperties(value = {"id", "username"})
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_follower",
+            joinColumns = @JoinColumn(
+                    name = "user_id",
+                    foreignKey = @ForeignKey(name = "user_follower_id_fk"),
+                    referencedColumnName = "user_id"
+            ),
+            inverseJoinColumns = @JoinColumn(
+                    name = "follower_id",
+                    foreignKey = @ForeignKey(name = "follower_user_id_fk"),
+                    referencedColumnName = "user_id"
+            )
+    )
+    private Set<UserAccount> followers = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userAccount", orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<Post> posts = new HashSet<>();
@@ -96,25 +132,51 @@ public class UserAccount {
         role.getUserAccounts().add(this);
     }
 
-    public Set<Post> getPost() {
+    public Set<UserAccount> getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(Set<UserAccount> following) {
+        this.following = following;
+    }
+
+    public void addFollowing(UserAccount userAccount) {
+        userAccount.followers.add(this);
+        following.add(userAccount);
+    }
+
+    public Set<UserAccount> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(Set<UserAccount> followers) {
+        this.followers = followers;
+    }
+
+    public void addFollower(UserAccount userAccount) {
+        userAccount.following.add(this);
+        followers.add(userAccount);
+    }
+
+    public Set<Post> getPosts() {
         return posts;
     }
 
-    public void setPost(Set<Post> post) {
-        this.posts = post;
+    public void setPosts(Set<Post> posts) {
+        this.posts = posts;
     }
 
     public void addPost(Post post) {
-            post.setUserAccount(this);
-            posts.add(post);
+        post.setUserAccount(this);
+        posts.add(post);
     }
 
-    public Set<Vote> getVote() {
+    public Set<Vote> getVotes() {
         return votes;
     }
 
-    public void setVote(Set<Vote> vote) {
-        this.votes = vote;
+    public void setVotes(Set<Vote> votes) {
+        this.votes = votes;
     }
 
     @Override

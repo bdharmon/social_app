@@ -5,6 +5,7 @@ import Login from './components/Login/Login';
 import jwtDecode from 'jwt-decode';
 import PrivateRoutes from "./components/Auth/PrivateRoutes";
 import Settings from "./components/Settings/Settings";
+import Home from "./components/Home/Home";
 
 const App = () => {
   const [authenticated, setAuthenticated] = useState(localStorage.getItem('authorization'));
@@ -27,7 +28,7 @@ const App = () => {
 
       <Routes>
         <Route element={<PrivateRoutes authenticated={authenticated} setAuthenticated={setAuthenticated} authToken={authToken} />}>
-          <Route path="/home" element={<p>home</p>} />
+          <Route path="/home" element={<Home />} />
           <Route path="/about" element={<p>about</p>} />
           <Route path="/settings" element={<Settings />} />
         </Route>

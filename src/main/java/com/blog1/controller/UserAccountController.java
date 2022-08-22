@@ -34,4 +34,9 @@ public class UserAccountController {
         return userAccountRepository.findById(UUID.fromString(id));
     }
 
+    @GetMapping(path = "filterUsername/{username}")
+    public List<UserAccount> getUserFilterByCharacter(@PathVariable String username) {
+        return userAccountRepository.findUserAccountsByUsernameContainsIgnoreCase(username);
+    }
+
 }
